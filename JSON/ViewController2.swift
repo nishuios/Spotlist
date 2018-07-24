@@ -17,9 +17,7 @@ class ViewController2: UIViewController,UIImagePickerControllerDelegate,UINaviga
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        
-        
-        
+            
         
     }
     

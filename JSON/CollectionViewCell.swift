@@ -10,6 +10,11 @@ import UIKit
 
 class CollectionViewCell: UICollectionViewCell {
     
+    @IBOutlet weak var heightview: UIView!
+    
+    
+    
+    
     @IBOutlet weak var myimageview: UIImageView!
     @IBOutlet weak var desc: UILabel!
     @IBOutlet weak var pricetag: UILabel!

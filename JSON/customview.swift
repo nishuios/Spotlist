@@ -12,26 +12,62 @@ import UIKit
 
 @IBDesignable class customview:UIView{
     
-    @IBInspectable var shadowcolor : UIColor = UIColor.gray
-    @IBInspectable var cornerradius:CGFloat = 3
-    @IBInspectable var shadowoffsetwidth: CGFloat = 6
-    @IBInspectable var shadowoffsetheight: CGFloat = 6
-    @IBInspectable var opacity:CGFloat = 0.5
-    
-    
-    
-    override func layoutSubviews() {
-        
-        layer.shadowColor = shadowcolor.cgColor
-        layer.cornerRadius = cornerradius
-        layer.shadowOffset.width = shadowoffsetwidth
-        layer.shadowOffset.height = shadowoffsetheight
-        layer.shadowOpacity = Float(opacity)
-        
-        let shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: cornerradius)
-        layer.shadowPath = shadowPath.cgPath
-        
-        
-        
+    @IBInspectable var cornerradius:CGFloat = 0 {
+        didSet{
+            self.layer.cornerRadius = cornerradius
+        }
     }
-}
+    
+    @IBInspectable  var backgroundcolor : UIColor = UIColor.brown {
+        didSet{
+            
+            self.layer.backgroundColor = backgroundcolor.cgColor
+        }
+    }
+
+    
+    @IBInspectable var borderwidth:CGFloat = 0{
+        didSet{
+            
+            self.layer.borderWidth = borderwidth
+        }
+    }
+
+    
+    @IBInspectable var bordercolor:UIColor = UIColor.clear{
+        didSet{
+           self.layer.borderColor = bordercolor.cgColor
+            
+        }
+    }
+
+    @IBInspectable var shadowcolor:UIColor = UIColor.clear{
+        didSet{
+            
+            self.layer.shadowColor = shadowcolor.cgColor
+        }
+    }
+    
+    @IBInspectable var shadowopactity:Float = 0{
+        didSet{
+            self.layer.shadowOpacity = shadowopactity
+        }
+    }
+    
+    @IBInspectable var shadowopactitywidth:CGFloat = 0{
+        didSet{
+            
+            self.layer.shadowOffset.width = shadowopactitywidth
+        }
+    }
+
+    
+    @IBInspectable var shadowopactityheight:CGFloat = 0{
+        didSet{
+            
+            self.layer.shadowOffset.height = shadowopactityheight
+        }
+    }
+    
+    
+   }

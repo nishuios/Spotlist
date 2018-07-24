@@ -20,6 +20,7 @@ class Login_ViewController: UIViewController,UITextFieldDelegate {
     @IBOutlet weak var myscrollview: UIScrollView!
 
     
+    //login button and Validtaion......
     @IBAction func login(_ sender: Any) {
         
     
@@ -54,41 +55,8 @@ class Login_ViewController: UIViewController,UITextFieldDelegate {
     }
     
     
-    func loginfunction(){
-        print("Start.....")
-          self.insertintofcm_did()
-        Alamofire.request("http://kolhapurtourism.co.in/ClassifiedApp/login.php?uid=\(self.email.text!)&pass=\(self.password.text!)").responseData { (resdata) in
-            
-            print(resdata.result.value as Any)
-            let res = resdata.result.value
-           
-            let pop = String(data: res!, encoding: String.Encoding.utf8)
-             print(pop!)
-            if pop == "User#1"{
-             
-                let controller = UIAlertController(title: "Login", message: "Invalid username & password", preferredStyle: UIAlertControllerStyle.alert)
-                let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-                
-                controller.addAction(action)
-                self.present(controller, animated: true, completion: nil)
-                
-            }else{
-              
-                let controller = UIAlertController(title: "Login", message: "Valid username & password", preferredStyle: UIAlertControllerStyle.alert)
-                let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-                
-                controller.addAction(action)
-                self.present(controller, animated: true, completion: nil)
-                
-
-                
-            }
-            
-            
-        }
-  }
-  
     
+    // checking while login, if the user is there or not
     func insertintofcm_did(){
         
         let mac = UIDevice.current.identifierForVendor?.uuidString
@@ -110,164 +78,167 @@ class Login_ViewController: UIViewController,UITextFieldDelegate {
             }
         }
     }
+   
+    //Sign up button for registration
     @IBAction func signup(_ sender: Any) {
         
         
-        let image = UIImage(named: "1.jpg")
-        let data = UIImageJPEGRepresentation(image!, 1.0)
-        //print(data as? Any)
-       // let str = String(data: data!, encoding: String.Encoding.utf8)
-        let date = DateFormatter()
-        date.dateStyle = .medium
-//        let pa:Parameters = ["fname":"ranjit",
-//                            "lname":"khapare",
-//                            "email":"ranjitkhapare45@yahoo.com",
-//                            "pass":"456123",
-//                            "mobile":"45454545",
-//                            "rimg":str as Any,
-//                            "rdate":date,
-//                            "dob":"3-6-1994"]
-       
-        
-        let parameters = ["uid":"nishu353535@gmail.com", "pass":"123456"]
-        
-            // Image to upload:
-            let imageToUploadURL = Bundle.main.url(forResource: "1", withExtension: "jpg")
-                     // Server address (replace this with the address of your own server):
-             let url = "http://kolhapurtourism.co.in/ClassifiedApp/Registration.php"
-        
-             // Use Alamofire to upload the image
-             Alamofire.upload(
-                     multipartFormData: { multipartFormData in
-                             // On the PHP side you can retrive the image using $_FILES["image"]["tmp_name"]
-                             multipartFormData.append(imageToUploadURL!, withName: "rimg")
-                             for (key, val) in parameters {
-                                     multipartFormData.append(val.data(using: String.Encoding.utf8)!, withName: key)
-                                 }
-                     },
-                     to: url,
-                     encodingCompletion: { encodingResult in
-                         switch encodingResult {
-                         case .success(let upload, _, _):
-                             upload.responseJSON { response in
-                                 if let jsonResponse = response.result.value as? [String: Any] {
-                                     print(jsonResponse)
-                                 }
-                             }
-                        case .failure(let encodingError):
-                             print(encodingError)
-                         }
-                 }
-                 )
+//        let image = UIImage(named: "1.jpg")
+//        let data = UIImageJPEGRepresentation(image!, 1.0)
+//        //print(data as? Any)
+//       // let str = String(data: data!, encoding: String.Encoding.utf8)
+//        let date = DateFormatter()
+//        date.dateStyle = .medium
+////        let pa:Parameters = ["fname":"ranjit",
+////                            "lname":"khapare",
+////                            "email":"ranjitkhapare45@yahoo.com",
+////                            "pass":"456123",
+////                            "mobile":"45454545",
+////                            "rimg":str as Any,
+////                            "rdate":date,
+////                            "dob":"3-6-1994"]
+//       
+//        
+//        let parameters = ["uid":"nishu353535@gmail.com", "pass":"123456"]
+//        
+//            // Image to upload:
+//            let imageToUploadURL = Bundle.main.url(forResource: "1", withExtension: "jpg")
+//                     // Server address (replace this with the address of your own server):
+//             let url = "http://kolhapurtourism.co.in/ClassifiedApp/Registration.php"
+//        
+//             // Use Alamofire to upload the image
+//             Alamofire.upload(
+//                     multipartFormData: { multipartFormData in
+//                             // On the PHP side you can retrive the image using $_FILES["image"]["tmp_name"]
+//                             multipartFormData.append(imageToUploadURL!, withName: "rimg")
+//                             for (key, val) in parameters {
+//                                     multipartFormData.append(val.data(using: String.Encoding.utf8)!, withName: key)
+//                                 }
+//                     },
+//                     to: url,
+//                     encodingCompletion: { encodingResult in
+//                         switch encodingResult {
+//                         case .success(let upload, _, _):
+//                             upload.responseJSON { response in
+//                                 if let jsonResponse = response.result.value as? [String: Any] {
+//                                     print(jsonResponse)
+//                                 }
+//                             }
+//                        case .failure(let encodingError):
+//                             print(encodingError)
+//                         }
+//                 }
+//                 )
          }
-        
-        
-        
-
-        
-        
-    
-     override func viewDidLoad() {
+          override func viewDidLoad() {
         super.viewDidLoad()
 
-        
-            //encode()
-        // 90426811-9e7e-47e7-a1b8-b0e2690f5bc2
-        // 1b8d6629-0929-4a4d-8366-89e6ef366345
-        // Do any additional setup after loading the view.
-        
-        self.myview.layer.cornerRadius = 20
-        //textfields
-        self.email.layer.cornerRadius = 20
-        self.password.layer.cornerRadius = 20
+            
+        self.myview.layer.cornerRadius = 8
         self.password.textColor = UIColor.white
-        self.login.layer.borderWidth = 1.25
-        self.signup.layer.borderWidth = 1.25
-        self.signup.layer.borderColor = UIColor.white.cgColor
-        self.login.layer.borderColor = UIColor.white.cgColor
-        self.myimageview.alpha = 0
-        self.myview.alpha = 0
-        self.email.alpha = 0
-        self.password.alpha = 0
-        self.login.alpha = 0
-        self.signup.alpha = 0
-
+        self.email.textColor = UIColor.white
         self.email.resignFirstResponder()
         self.password.resignFirstResponder()
         self.email.delegate = self
         self.password.delegate = self
-        
-        
-        self.login.layer.cornerRadius = 20
-        self.login.layer.borderWidth = 1.0
-        self.login.layer.borderColor = UIColor.brown.cgColor
-        
-        self.signup.layer.cornerRadius = 20
-        self.signup.layer.borderWidth = 1.0
-        self.signup.layer.borderColor = UIColor.brown.cgColor
-      
-        custom_animation()
-    }
     
-    
-    func custom_animation(){
-        self.myimageview.layer.transform = CATransform3DTranslate(CATransform3DIdentity, -200, 0, 0)
-        UIView.animate(withDuration: 0.50, animations: {
-            self.myimageview.alpha = 1
-            self.myimageview.layer.transform = CATransform3DIdentity
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.isTranslucent = true
+        
+        self.navigationController?.navigationBar.tintColor = UIColor.white
             
-            
-        }) { (true) in
-            
-            self.myview.layer.transform = CATransform3DTranslate(CATransform3DIdentity, -200, 0, 0)
-            UIView.animate(withDuration: 0.30, animations: {
-                self.myview.alpha = 1
-                self.myview.layer.transform  = CATransform3DIdentity
-            }) { (true) in
-                self.email.layer.transform = CATransform3DTranslate(CATransform3DIdentity, 400, 0, 0)
-                UIView.animate(withDuration: 0.30, animations: {
-                    self.email.alpha = 1
-                    self.email.layer.transform = CATransform3DIdentity
-                    
-                }) { (true) in
-                    
-                    self.password.layer.transform = CATransform3DTranslate(CATransform3DIdentity, 400, 0, 0)
-                    UIView.animate(withDuration: 0.30, animations: {
-                        self.password.alpha = 1
-                        self.password.layer.transform = CATransform3DIdentity
-                    }, completion: { (true) in
-                        self.login.layer.transform = CATransform3DTranslate(CATransform3DIdentity, 0, 250, 0)
-                        UIView.animate(withDuration: 0.30, animations: {
-                            self.login.alpha = 1
-                            self.login.layer.transform = CATransform3DIdentity
-                        }, completion: { (true) in
-                            self.signup.layer.transform  = CATransform3DTranslate(CATransform3DIdentity, 0, 250, 0)
-                            UIView.animate(withDuration: 0.30, animations: {
-                                self.signup.alpha  = 1
-                                self.signup.layer.transform = CATransform3DIdentity
-                            })
-                        })
-                    })
-                }
-            }
-        }
- }
-       func textFieldDidBeginEditing(_ textField: UITextField) {
-    
-        let scroll:CGPoint = CGPoint(x: 0, y: textField.frame.origin.y)
-        self.myscrollview.setContentOffset(scroll, animated: true)
+          
+            gradientcolor()
         
     }
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        let zero = CGPoint.init(x: 0, y: -20)
-        self.myscrollview.setContentOffset(zero, animated: true)
     
+    func gradientcolor(){
+        
+        
+        let gradient = CAGradientLayer()
+        
+        let blue = UIColor(red: 100/255.0, green: 80/255.0, blue: 190/255.0, alpha: 1/0)
+        let orange = UIColor(red: 244/255.0, green: 88/255.0, blue: 53/255.0, alpha: 1/0)
+        let pink = UIColor(red: 120/255.0, green: 70/255.0, blue: 107/255.0, alpha: 1/0)
+        
+        gradient.colors = [blue.cgColor, orange.cgColor, pink.cgColor]
+        gradient.locations = [0.0 , 0.75 , 1.0]
+        gradient.startPoint = CGPoint(x: 0.75, y: 1.75)
+        gradient.endPoint = CGPoint(x: 0.0, y: 1.0)
+        gradient.frame = view.frame
+        self.view.layer.insertSublayer(gradient, at: 0)
+
     }
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
-    }
+
+    
 }
 
 
+// login
+extension Login_ViewController{
+    
+    func loginfunction(){
+        print("Start.....")
+        //self.insertintofcm_did()
+        Alamofire.request("http://kolhapurtourism.co.in/ClassifiedApp/login.php?uid=\(self.email.text!)&pass=\(self.password.text!)").responseData { (resdata) in
+            
+            print(resdata.result.value as Any)
+            let res = resdata.result.value
+            
+            let pop = String(data: res!, encoding: String.Encoding.utf8)
+            print(pop!)
+            if pop == "User#1"{
+                
+                let controller = UIAlertController(title: "Login", message: "Invalid username & password", preferredStyle: UIAlertControllerStyle.alert)
+                let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+                
+                controller.addAction(action)
+                self.present(controller, animated: true, completion: nil)
+                
+            }else{
+                
+                let controller = UIAlertController(title: "Login", message: "Valid username & password", preferredStyle: UIAlertControllerStyle.alert)
+                let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+                
+    
+               self.performSegue(withIdentifier: "tabbarcontroller", sender: self)
+                
+                controller.addAction(action)
+                self.present(controller, animated: true, completion: nil)
+    
+            }
+            
+            
+        }
+    }
+
+    
+}
+
+// Handle keyboard While typing...
+ extension Login_ViewController{
+    
+       func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+
+}
+
+// custom layer for textfields
+extension Login_ViewController{
+    
+    func drawlineatbottmoftextfield(textfields:UITextField){
+        
+        
+        let layers = CALayer()
+        layers.backgroundColor = UIColor.darkGray.cgColor
+        layers.frame = CGRect(x: 0.0, y: textfields.frame.size.height - 2.0, width:textfields.frame.size.width, height: 2.0)
+        textfields.layer.addSublayer(layers)
+    }
+
+    
+    
+}
 

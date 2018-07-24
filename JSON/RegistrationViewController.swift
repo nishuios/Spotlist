@@ -10,18 +10,14 @@ import UIKit
 import Alamofire
 class RegistrationViewController: UIViewController,UITextFieldDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
 
-    @IBOutlet weak var myview: UIView!
-    @IBOutlet weak var mycoverbutton: UIButton!
+   
     @IBOutlet weak var firstname: UITextField!
     @IBOutlet weak var lastname: UITextField!
     @IBOutlet weak var mobile: UITextField!
     @IBOutlet weak var password: UITextField!
     @IBOutlet weak var email: UITextField!
-    @IBOutlet weak var cancel: UIButton!
-    @IBOutlet weak var signbtn: UIButton!
     @IBOutlet weak var myimageview: UIImageView!
     @IBOutlet weak var myscrollview: UIScrollView!
-    @IBOutlet weak var mysmallimageview: UIImageView!
     
     
     
@@ -37,133 +33,82 @@ class RegistrationViewController: UIViewController,UITextFieldDelegate,UIImagePi
          myImageUploadRequest()
         
     }
+       
+    @IBAction func cancel(_ sender: UIButton) {
+        
+    dismiss(animated: true, completion: nil)
+        print("cancel")
+    }
     
     
+    @IBAction func camera_btn(_ sender: UIButton) {
+            customalertviews()
+        print("photo")
+        
+    }
     
-        func myImageUploadRequest()
-        {
-            
-            
-            let dateformatter = DateFormatter()
-            
-            dateformatter.dateStyle = DateFormatter.Style.short
-            
-            dateformatter.timeStyle = DateFormatter.Style.short
-            
-            let now = dateformatter.string(from: NSDate() as Date)
-            
-           
-            let imageDatas: Data = UIImageJPEGRepresentation(self.myimageview.image!, 0.9)!
-            let imageStr = imageDatas.base64EncodedString()
-            
-            
-            let para = [                      "fname":firstname.text!,
-                                               "lname":lastname.text!,
-                                               "email":email.text!,
-                                               "pass":password.text!,
-                                               "mobile":mobile.text!,
-                                               "rimg":imageStr,
-                                               "rdate":now ]
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
+        
+    }
+    
+    func gradientcol(){
+        let gradient = CAGradientLayer()
+        
+        let blue = UIColor(red: 100/255.0, green: 80/255.0, blue: 190/255.0, alpha: 1/0)
+        let orange = UIColor(red: 244/255.0, green: 88/255.0, blue: 53/255.0, alpha: 1/0)
+        let pink = UIColor(red: 120/255.0, green: 70/255.0, blue: 107/255.0, alpha: 1/0)
+        
+        gradient.colors = [blue.cgColor, orange.cgColor, pink.cgColor]
+        gradient.locations = [0.0 , 0.75 , 1.0]
+        gradient.startPoint = CGPoint(x: 0.75, y: 1.75)
+        gradient.endPoint = CGPoint(x: 0.0, y: 1.0)
+        gradient.frame = view.frame
+        self.view.layer.insertSublayer(gradient, at: 0)
+        
+        
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.isTranslucent = true
+    }
+    
+         override func viewDidLoad() {
+        super.viewDidLoad()
 
-            
-            
-            let myUrl = NSURL(string: "http://kolhapurtourism.co.in/ClassifiedApp/registration.php");
-            
-            let request = NSMutableURLRequest(url:myUrl! as URL) as NSMutableURLRequest
-            
-            request.httpMethod = "POST"
-            
-            
-            let boundary = generateBoundaryString()
-            
-            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-            
-            let imageData = UIImageJPEGRepresentation(myimageview.image!, 0.1)
-            print(imageData?.base64EncodedData() as Any)
-           // let imageStr = imageData?.base64EncodedString()
+            gradientcol()
+             
+        let dateformatter = DateFormatter()
+        
+        dateformatter.dateStyle = DateFormatter.Style.short
+        
+        dateformatter.timeStyle = DateFormatter.Style.medium
+        dateformatter.dateFormat = "yy/mm/dd"
+        
+        let now = dateformatter.string(from: NSDate() as Date)
 
-            if(imageData==nil)  { return }
-            
-            //  user##      request.HTTPBody = createBodyWithParameters(parameters: para, filePathKey: "file", imageDataKey: imageData! as NSData, boundary: boundary)
-            
-            request.httpBody = createBodyWithParameters(parameters: para as? [String : String], filePathKey: "myiosimages", imageDataKey: imageData! as NSData, boundary: boundary) as Data
-            
-            
-            let task = URLSession.shared.dataTask(with: request as URLRequest) {
-                data, response, error in
-                
-                if error != nil {
-                    print("error=\(String(describing: error))")
-                    return
-                }
-                
-                print(response!)
-                
-                // Print out reponse body
-                let responseString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)
-                print("****** response data = \(responseString!)")
-                
-                do {
-                    
-                    let json = try JSONSerialization.jsonObject(with: data!, options: JSONSerialization.ReadingOptions.allowFragments) as? NSDictionary
-                    
-                    print("  json  \(String(describing: json))")
-                    
-                    
-                }catch
-                {
-                    print(error)
-                }
-                
-            }
-            
-            task.resume()
-        }
+        print(now)
+
+        // Do any additional setup after loading the view.
+       
+       
+        self.myimageview.layer.cornerRadius = self.myimageview.frame.size.width / 2
+        self.myimageview.clipsToBounds = true
+        self.myimageview.layer.masksToBounds = true
         
-        
-        func createBodyWithParameters(parameters: [String: String]?, filePathKey: String?, imageDataKey: NSData, boundary: String) -> NSData {
-            let body = NSMutableData();
             
-            if parameters != nil {
-                for (key, value) in parameters! {
-                    body.appendString(string: "--\(boundary)\r\n")
-                    body.appendString(string: "Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
-                    body.appendString(string: "\(value)\r\n")
-                }
-            }
-            
-            let filename = "appleimages"
-            let mimetype = "image/jpg"
-            
-            body.appendString(string: "--\(boundary)\r\n")
-            body.appendString(string: "Content-Disposition: form-data; name=\"\(filePathKey!)\"; filename=\"\(filename)\"\r\n")
-            body.appendString(string: "Content-Type: \(mimetype)\r\n\r\n")
-            body.append(imageDataKey as Data)
-            body.appendString(string: "\r\n")
-            
-            
-            
-            body.appendString(string: "--\(boundary)--\r\n")
-            
-            return body
-        }
-        
-        
-        
-        func generateBoundaryString() -> String {
-            return "Boundary-\(NSUUID().uuidString)"
-           
-        }
-        
-        
+        let bckbtn = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+            self.navigationItem.backBarButtonItem = bckbtn
+   
     
-    
-    
-    
+    }
+
+}
+//Validation for signup textfields
+extension RegistrationViewController{
     func textfiled_validation(){
         
         if (self.firstname.text == "" && self.lastname.text == "" && self.mobile.text == "" && self.password.text == "" && self.email.text == "" && myimageview.image == nil)  {
-        
+            
             
             let controller = UIAlertController(title: "Registration", message: "All fields are empty", preferredStyle: UIAlertControllerStyle.alert)
             let action = UIAlertAction(title: "Dismiss", style: .cancel, handler: nil)
@@ -230,80 +175,64 @@ class RegistrationViewController: UIViewController,UITextFieldDelegate,UIImagePi
             controller.addAction(action)
             self.present(controller, animated: true, completion: nil)
             
-            
-            
-            
-            
         }
         
         print("all fields are field")
-    
-    }
-    
-    @IBAction func cancel(_ sender: UIButton) {
-        
-    dismiss(animated: true, completion: nil)
-        print("cancel")
-    }
-    
-    
-    @IBAction func camera_btn(_ sender: UIButton) {
-        
-       
-      
-        customalertviews()
-        print("photo")
         
     }
-    
-        func customalertviews(){
+
+}
+
+//Handle Image picking from camera n photo library
+extension RegistrationViewController{
+    func customalertviews(){
         
         
-        let controller = UIAlertController(title: "CHOOSE", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        let controller = UIAlertController(title: "CHOOSE", message: nil, preferredStyle: UIAlertControllerStyle.alert)
         
         let Gallery = UIAlertAction(title: "Gallery", style: UIAlertActionStyle.default) { (action) in
             
             if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.photoLibrary){
-            
-            
-            self.imageviewcontroller.delegate = self
-            self.imageviewcontroller.allowsEditing = true
-            self.imageviewcontroller.sourceType = .photoLibrary
-            self.present(self.imageviewcontroller, animated: true, completion: nil)
-            
+                
+                
+                self.imageviewcontroller.delegate = self
+                self.imageviewcontroller.allowsEditing = true
+                self.imageviewcontroller.sourceType = .photoLibrary
+                self.present(self.imageviewcontroller, animated: true, completion: nil)
+                
             }
-            }
-           
-    
+        }
+        
+        
         let camera = UIAlertAction(title: "Camera", style: UIAlertActionStyle.default) { (action ) in
-     
+            
             
             if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.camera){
                 
-            self.imageviewcontroller.delegate = self
-            self.imageviewcontroller.allowsEditing = true
-            self.imageviewcontroller.sourceType = .camera
-            self.present(self.imageviewcontroller, animated: true, completion: nil)
+                self.imageviewcontroller.delegate = self
+                self.imageviewcontroller.allowsEditing = true
+                self.imageviewcontroller.sourceType = .camera
+                self.present(self.imageviewcontroller, animated: true, completion: nil)
             }
-        
-                else {
+                
+            else {
                 
                 print("source not available")
                 let a = UIAlertController(title: "Camera", message: "Camera Not Working", preferredStyle: UIAlertControllerStyle.alert)
                 let d = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
-               
+                
                 
                 a.addAction(d)
                 
                 self.present(a, animated: true, completion: nil)
-        
+                
             }
             
         }
         
         let cancel = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil)
         
-            
+        
         controller.addAction(Gallery)
         controller.addAction(camera)
         controller.addAction(cancel)
@@ -311,152 +240,22 @@ class RegistrationViewController: UIViewController,UITextFieldDelegate,UIImagePi
         present(controller, animated: true, completion: nil)
         
     }
+
+}
+
+
+//Handle Keyboard while typing
+extension RegistrationViewController{
     
     
-    func imgs(){
-        
-        
-        
-        
-        
-        
-           }
-
-    
-    
-      override func viewDidLoad() {
-        super.viewDidLoad()
-
-        imgs()
-       
-       
-        let dateformatter = DateFormatter()
-        
-        dateformatter.dateStyle = DateFormatter.Style.short
-        
-        dateformatter.timeStyle = DateFormatter.Style.medium
-        dateformatter.dateFormat = "yy/mm/dd"
-        
-        let now = dateformatter.string(from: NSDate() as Date)
-
-        print(now)
-
-        // Do any additional setup after loading the view.
-        self.myview.layer.cornerRadius = 20
-        self.myview.layer.borderColor = UIColor.white.cgColor
-        self.myview.layer.borderWidth = 1.0
-        self.firstname.layer.cornerRadius = 20
-        self.lastname.layer.cornerRadius = 20
-        self.mobile.layer.cornerRadius = 20
-        self.password.layer.cornerRadius = 20
-        self.email.layer.cornerRadius = 20
-        self.signbtn.layer.cornerRadius = 20
-        self.signbtn.layer.borderWidth = 1.0
-        self.signbtn.layer.borderColor = UIColor.brown.cgColor
-        self.cancel.layer.borderColor = UIColor.brown.cgColor
-        self.cancel.layer.borderWidth = 1.0
-        self.cancel.layer.cornerRadius = 20
-
-        
-        self.myimageview.layer.cornerRadius = self.myimageview.frame.size.width / 2
-        self.myimageview.clipsToBounds = true
-        self.myimageview.layer.masksToBounds = true
-        
-        self.myimageview.alpha = 0
-        self.myview.alpha = 0
-        self.firstname.alpha = 0
-        self.lastname.alpha = 0
-        self.mobile.alpha = 0
-        self.password.alpha = 0
-        self.signbtn.alpha = 0
-        self.cancel.alpha = 0
-        self.email.alpha = 0
-        
-        
-   
-    animation()
-    }
-
-
-    func animation()
-    {
-        self.myimageview.layer.transform = CATransform3DTranslate(CATransform3DIdentity, -200, 0, 0)
-        UIView.animate(withDuration: 0.40, animations: {
-            self.myimageview.alpha = 1
-            self.myimageview.layer.transform = CATransform3DIdentity
-            self.myimageview.layer.borderWidth = 0.70
-            self.myimageview.layer.borderColor = UIColor.white.cgColor
-        }, completion:{  (true) in
-            self.myview.layer.transform = CATransform3DTranslate(CATransform3DIdentity, -200, 0, 0)
-            UIView.animate(withDuration: 0.40, animations: {
-                self.myview.alpha = 1
-                self.myview.layer.transform  = CATransform3DIdentity
-            }, completion: { (true) in
-                self.firstname.layer.transform = CATransform3DTranslate(CATransform3DIdentity, 400, 0, 0)
-                UIView.animate(withDuration: 0.40, animations: {
-                    self.firstname.alpha = 1
-                    self.firstname.layer.transform = CATransform3DIdentity
-                }, completion: { (true) in
-                    
-                    self.lastname.layer.transform = CATransform3DTranslate(CATransform3DIdentity, 400, 0, 0)
-                    UIView.animate(withDuration: 0.40, animations: {
-                        self.lastname.alpha = 1
-                        self.lastname.layer.transform = CATransform3DIdentity
-                    }, completion: { (true) in
-                        
-                        self.email.layer.transform = CATransform3DTranslate(CATransform3DIdentity, 400, 0, 0)
-                        UIView.animate(withDuration: 0.40, animations: {
-                            self.email.alpha = 1
-                            self.email.layer.transform = CATransform3DIdentity
-                        }, completion: { (true) in
-                            self.password.layer.transform = CATransform3DTranslate(CATransform3DIdentity, 400, 0, 0)
-                            UIView.animate(withDuration: 0.40, animations: {
-                                
-                                self.password.alpha = 1
-                                self.password.layer.transform = CATransform3DIdentity
-                            }, completion: { (true) in
-                                
-                                
-                                self.mobile.layer.transform = CATransform3DTranslate(CATransform3DIdentity, 0, 400, 0)
-                                UIView.animate(withDuration: 0.40, animations: {
-                                    self.mobile.alpha = 1
-                                    self.mobile.layer.transform = CATransform3DIdentity
-                                }, completion: { (true) in
-                                    
-                                    self.signbtn.layer.transform = CATransform3DTranslate(CATransform3DIdentity, 0, 250, 0)
-                                    UIView.animate(withDuration: 0.40, animations: {
-                                        self.signbtn.alpha = 1
-                                        self.signbtn.layer.transform = CATransform3DIdentity
-                                        
-                                    }, completion: { (true) in
-                                        self.cancel.layer.transform = CATransform3DTranslate(CATransform3DIdentity, 0, 250, 0)
-                                        UIView.animate(withDuration: 0.40, animations: {
-                                            self.cancel.alpha = 1
-                                            self.cancel.layer.transform = CATransform3DIdentity
-                                        })
-                                        
-                                    })
-                                })
-                            })
-                        })
-                    })
-                })
-            })
-        })
-
-        
-        
-    }
-
-       
     func textFieldDidBeginEditing(_ textField: UITextField) {
         
-        let scroll:CGPoint = CGPoint(x: 0, y: textField.frame.origin.y - 110)
+        let scroll:CGPoint = CGPoint(x: 0, y: textField.frame.origin.y - 120)
         self.myscrollview.setContentOffset(scroll, animated: true)
         
     }
     func textFieldDidEndEditing(_ textField: UITextField) {
-        let zero = CGPoint.init(x: 0, y: -3)
+        let zero = CGPoint.init(x: 0, y: -50)
         self.myscrollview.setContentOffset(zero, animated: true)
         
     }
@@ -466,9 +265,21 @@ class RegistrationViewController: UIViewController,UITextFieldDelegate,UIImagePi
     }
 
 }
+// Custom layer for designs
+extension RegistrationViewController{
+    func drawlineatbottmoftextfield(textfields:UITextField){
+        
+        
+        let layers = CALayer()
+        layers.backgroundColor = UIColor.darkGray.cgColor
+        layers.frame = CGRect(x: 0.0, y: textfields.frame.size.height - 2.0, width:textfields.frame.size.width, height: 2.0)
+        textfields.layer.addSublayer(layers)
+    }
+
+}
 
 
-
+//Image picker from photo library
 extension RegistrationViewController{
     
     
@@ -479,22 +290,13 @@ extension RegistrationViewController{
         myimageview.image = chosenImage
         myimageview.contentMode = .scaleAspectFill
         
-        self.mycoverbutton.imageView?.isHidden = true
-        
-        mysmallimageview.image = chosenImage
-        mysmallimageview.contentMode = .scaleAspectFill
-        
-        mysmallimageview.layer.cornerRadius = 25
-        mysmallimageview.clipsToBounds = true
-        mysmallimageview.layer.masksToBounds = true
-        mysmallimageview.layer.borderWidth = 0.90
-        mysmallimageview.layer.borderColor = UIColor.white.cgColor
         
         dismiss(animated:true, completion: nil)
     }
     
+    
+    
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        self.mycoverbutton.imageView?.isHidden = true
 
         
         dismiss(animated: true, completion: nil)
@@ -514,5 +316,196 @@ extension NSMutableData {
 }
 
 
+//Upload the data form sign up page
+extension RegistrationViewController{
+   
+    func myImageUploadRequest()
+    {
+        
+        
+        let dateformatter = DateFormatter()
+        
+        dateformatter.dateStyle = DateFormatter.Style.short
+        
+        dateformatter.timeStyle = DateFormatter.Style.short
+        
+        let now = dateformatter.string(from: NSDate() as Date)
+        
+        
+        let imageDatas: Data = UIImageJPEGRepresentation(self.myimageview.image!, 0.9)!
+        let imageStr = imageDatas.base64EncodedString()
+        
+        
+        let para = [                      "fname":firstname.text!,
+                                          "lname":lastname.text!,
+                                          "email":email.text!,
+                                          "pass":password.text!,
+                                          "mobile":mobile.text!,
+                                          "rimg":imageStr,
+                                          "rdate":now ]
+        
+        
+        
+        let myUrl = NSURL(string: "http://kolhapurtourism.co.in/ClassifiedApp/registration.php");
+        
+        let request = NSMutableURLRequest(url:myUrl! as URL) as NSMutableURLRequest
+        
+        request.httpMethod = "POST"
+        
+        
+        let boundary = generateBoundaryString()
+        
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        
+        let imageData = UIImageJPEGRepresentation(myimageview.image!, 0.1)
+        print(imageData?.base64EncodedData() as Any)
+        // let imageStr = imageData?.base64EncodedString()
+        
+        if(imageData==nil)  { return }
+        
+        //  user##      request.HTTPBody = createBodyWithParameters(parameters: para, filePathKey: "file", imageDataKey: imageData! as NSData, boundary: boundary)
+        
+        request.httpBody = createBodyWithParameters(parameters: para as? [String : String], filePathKey: "myiosimages", imageDataKey: imageData! as NSData, boundary: boundary) as Data
+        
+        
+        let task = URLSession.shared.dataTask(with: request as URLRequest) {
+            data, response, error in
+            
+            if error != nil {
+                print("error=\(String(describing: error))")
+                return
+            }
+            
+            print(response!)
+            
+            // Print out reponse body
+            let responseString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)
+            print("****** response data = \(responseString!)")
+            
+            do {
+                
+                let json = try JSONSerialization.jsonObject(with: data!, options: JSONSerialization.ReadingOptions.allowFragments) as? NSDictionary
+                
+                print("  json  \(String(describing: json))")
+                
+                
+            }catch
+            {
+                print(error)
+            }
+            
+        }
+        
+        task.resume()
+    }
+    
+    
+    func createBodyWithParameters(parameters: [String: String]?, filePathKey: String?, imageDataKey: NSData, boundary: String) -> NSData {
+        let body = NSMutableData();
+        
+        if parameters != nil {
+            for (key, value) in parameters! {
+                body.appendString(string: "--\(boundary)\r\n")
+                body.appendString(string: "Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
+                body.appendString(string: "\(value)\r\n")
+            }
+        }
+        
+        let filename = "appleimages"
+        let mimetype = "image/jpg"
+        
+        body.appendString(string: "--\(boundary)\r\n")
+        body.appendString(string: "Content-Disposition: form-data; name=\"\(filePathKey!)\"; filename=\"\(filename)\"\r\n")
+        body.appendString(string: "Content-Type: \(mimetype)\r\n\r\n")
+        body.append(imageDataKey as Data)
+        body.appendString(string: "\r\n")
+        
+        
+        
+        body.appendString(string: "--\(boundary)--\r\n")
+        
+        return body
+    }
+    
+    
+    
+    func generateBoundaryString() -> String {
+        return "Boundary-\(NSUUID().uuidString)"
+        
+    }
 
-
+    
+}
+//// Animating Textfields,button and View
+//extension RegistrationViewController {
+//    func animation()
+//    {
+//        self.myimageview.layer.transform = CATransform3DTranslate(CATransform3DIdentity, -200, 0, 0)
+//        UIView.animate(withDuration: 0.40, animations: {
+//            self.myimageview.alpha = 1
+//            self.myimageview.layer.transform = CATransform3DIdentity
+//            self.myimageview.layer.borderWidth = 0.70
+//            self.myimageview.layer.borderColor = UIColor.black.cgColor
+//        }, completion:{  (true) in
+//            self.myview.layer.transform = CATransform3DTranslate(CATransform3DIdentity, -200, 0, 0)
+//            UIView.animate(withDuration: 0.40, animations: {
+//                self.myview.alpha = 1
+//                self.myview.layer.transform  = CATransform3DIdentity
+//            }, completion: { (true) in
+//                self.firstname.layer.transform = CATransform3DTranslate(CATransform3DIdentity, 400, 0, 0)
+//                UIView.animate(withDuration: 0.40, animations: {
+//                    self.firstname.alpha = 1
+//                    self.firstname.layer.transform = CATransform3DIdentity
+//                }, completion: { (true) in
+//                    
+//                    self.lastname.layer.transform = CATransform3DTranslate(CATransform3DIdentity, 400, 0, 0)
+//                    UIView.animate(withDuration: 0.40, animations: {
+//                        self.lastname.alpha = 1
+//                        self.lastname.layer.transform = CATransform3DIdentity
+//                    }, completion: { (true) in
+//                        
+//                        self.email.layer.transform = CATransform3DTranslate(CATransform3DIdentity, 400, 0, 0)
+//                        UIView.animate(withDuration: 0.40, animations: {
+//                            self.email.alpha = 1
+//                            self.email.layer.transform = CATransform3DIdentity
+//                        }, completion: { (true) in
+//                            self.password.layer.transform = CATransform3DTranslate(CATransform3DIdentity, 400, 0, 0)
+//                            UIView.animate(withDuration: 0.40, animations: {
+//                                
+//                                self.password.alpha = 1
+//                                self.password.layer.transform = CATransform3DIdentity
+//                            }, completion: { (true) in
+//                                
+//                                
+//                                self.mobile.layer.transform = CATransform3DTranslate(CATransform3DIdentity, 0, 400, 0)
+//                                UIView.animate(withDuration: 0.40, animations: {
+//                                    self.mobile.alpha = 1
+//                                    self.mobile.layer.transform = CATransform3DIdentity
+//                                }, completion: { (true) in
+//                                    
+//                                    self.signbtn.layer.transform = CATransform3DTranslate(CATransform3DIdentity, 0, 250, 0)
+//                                    UIView.animate(withDuration: 0.40, animations: {
+//                                        self.signbtn.alpha = 1
+//                                        self.signbtn.layer.transform = CATransform3DIdentity
+//                                        
+//                                    }, completion: { (true) in
+//                                        self.cancel.layer.transform = CATransform3DTranslate(CATransform3DIdentity, 0, 250, 0)
+//                                        UIView.animate(withDuration: 0.40, animations: {
+//                                            self.cancel.alpha = 1
+//                                            self.cancel.layer.transform = CATransform3DIdentity
+//                                        })
+//                                        
+//                                    })
+//                                })
+//                            })
+//                        })
+//                    })
+//                })
+//            })
+//        })
+//        
+//        
+//        
+//    }
+//
+//}
